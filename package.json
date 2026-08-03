@@ -1,0 +1,9 @@
+{
+  "name": "libreria-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "App de consulta de precios e inventario para Libreria/Regaleria/Cotillon",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
