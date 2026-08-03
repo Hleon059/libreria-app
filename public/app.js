@@ -423,21 +423,32 @@ function setupImport() {
 async function handleImportFile(e) {
   const file = e.target.files[0];
   if (!file) return;
-  $("#fileDropLabel").textContent = file.name;
-  const buf = await file.arrayBuffer();
-  const wb = XLSX.read(buf, { type: "array" });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: "" });
-  const parsed = parseCatalogRows(rows);
-  if (parsed.length === 0) {
-    $("#importResult").innerHTML = `<p style="color:var(--bad)">No se pudo interpretar el archivo. Revisá que tenga columnas ARTICULO, CODIGO, DESCRIPCION, PRECIO1, PRECIO2.</p>`;
-    return;
-  }
-  pendingImport = parsed;
-  $("#importSummary").textContent = `Se detectaron ${parsed.length} productos en el archivo. Al confirmar, se actualizarán los precios existentes y se agregarán los nuevos.`;
-  $("#importPreview").classList.remove("hidden");
+  $("#fileDropLabel").textContent = "Leyendo " + file.name + "…";
   $("#importResult").innerHTML = "";
-  renderCategoryChips(); // refresca el datalist de categorías sugeridas
+  $("#importPreview").classList.add("hidden");
+  try {
+    if (typeof XLSX === "undefined") {
+      throw new Error("No se pudo cargar la librería para leer Excel (XLSX). Revisá tu conexión a internet y volvé a intentar.");
+    }
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: "" });
+    const parsed = parseCatalogRows(rows);
+    if (parsed.length === 0) {
+      $("#fileDropLabel").textContent = "Tocá para elegir el archivo";
+      $("#importResult").innerHTML = `<p style="color:var(--bad)">No se pudo interpretar el archivo. Revisá que tenga columnas ARTICULO, CODIGO, DESCRIPCION, PRECIO1, PRECIO2.</p>`;
+      return;
+    }
+    pendingImport = parsed;
+    $("#fileDropLabel").textContent = file.name;
+    $("#importSummary").textContent = `Se detectaron ${parsed.length} productos en el archivo. Al confirmar, se actualizarán los precios existentes y se agregarán los nuevos.`;
+    $("#importPreview").classList.remove("hidden");
+    renderCategoryChips(); // refresca el datalist de categorías sugeridas
+  } catch (err) {
+    $("#fileDropLabel").textContent = "Tocá para elegir el archivo";
+    $("#importResult").innerHTML = `<p style="color:var(--bad)">Error al leer el archivo: ${escapeHtml(err.message)}</p>`;
+  }
 }
 
 // Busca la fila de encabezado (ARTICULO / CODIGO / DESCRIPCION / PRECIO1 / PRECIO2)

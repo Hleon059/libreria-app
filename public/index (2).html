@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Librería · Precios &amp; Stock</title>
+<meta name="theme-color" content="#1f2d3d" />
+<link rel="manifest" href="/manifest.json" />
+<link rel="icon" href="/icons/icon-192.png" />
+<link rel="apple-touch-icon" href="/icons/icon-192.png" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">§</span>
+    <div>
+      <div class="brand-title">Librería</div>
+      <div class="brand-sub">Precios &amp; Stock</div>
+    </div>
+  </div>
+  <button id="syncBtn" class="icon-btn" title="Actualizar datos">⟳</button>
+</header>
+
+<main id="app">
+
+  <!-- BUSCAR -->
+  <section id="view-buscar" class="view active">
+    <div class="search-bar">
+      <input id="searchInput" type="search" inputmode="search" placeholder="Código, parte del código o descripción…" autocomplete="off" />
+      <button id="scanBtn" class="icon-btn" title="Escanear código de barras">▤</button>
+    </div>
+    <div id="categoryChips" class="category-chips"></div>
+    <div id="searchMeta" class="search-meta"></div>
+    <ul id="resultsList" class="results-list"></ul>
+  </section>
+
+  <!-- ALERTAS -->
+  <section id="view-alertas" class="view">
+    <h2 class="view-title">Stock bajo</h2>
+    <p class="view-hint">Productos en o por debajo de su mínimo definido.</p>
+    <ul id="alertsList" class="results-list"></ul>
+  </section>
+
+  <!-- IMPORTAR -->
+  <section id="view-importar" class="view">
+    <h2 class="view-title">Importar lista de precios</h2>
+    <p class="view-hint">Subí el archivo tal cual lo recibís del proveedor (.xls, .xlsx o .csv). Se actualizan los precios de los productos existentes y se agregan los nuevos.</p>
+    <label class="file-drop" id="fileDrop">
+      <input type="file" id="fileInput" accept=".xls,.xlsx,.csv" hidden />
+      <span id="fileDropLabel">Tocá para elegir el archivo</span>
+    </label>
+    <div id="importPreview" class="import-preview hidden">
+      <p id="importSummary"></p>
+      <label class="field-label" for="importCategory">Rubro de este archivo (opcional)</label>
+      <input id="importCategory" type="text" list="categoryList" placeholder="Ej: Librería, Cotillón, Mercería…" />
+      <datalist id="categoryList"></datalist>
+      <button id="confirmImportBtn" class="btn btn-primary">Confirmar actualización</button>
+      <button id="cancelImportBtn" class="btn btn-ghost">Cancelar</button>
+    </div>
+    <div id="importResult" class="import-result"></div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section id="view-historial" class="view">
+    <h2 class="view-title">Historial de movimientos</h2>
+    <ul id="historyList" class="results-list"></ul>
+  </section>
+
+</main>
+
+<!-- Detalle de producto (modal) -->
+<div id="productModal" class="modal hidden">
+  <div class="modal-card">
+    <button id="closeModalBtn" class="modal-close">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Escáner de cámara (modal) -->
+<div id="scanModal" class="modal hidden">
+  <div class="modal-card scan-card">
+    <button id="closeScanBtn" class="modal-close">✕</button>
+    <h3>Escaneá el código de barras</h3>
+    <div id="scanRegion"></div>
+  </div>
+</div>
+
+<!-- Selector de usuario (primera vez) -->
+<div id="userModal" class="modal hidden">
+  <div class="modal-card">
+    <h3>¿Quién sos?</h3>
+    <p class="view-hint">Para dejar registro de quién hace cada movimiento de stock.</p>
+    <div id="userOptions" class="user-options"></div>
+    <input id="userCustom" type="text" placeholder="Otro nombre…" />
+    <button id="userConfirmBtn" class="btn btn-primary">Confirmar</button>
+  </div>
+</div>
+
+<nav class="tabbar">
+  <button class="tab-btn active" data-view="buscar"><span>🔎</span>Buscar</button>
+  <button class="tab-btn" data-view="alertas"><span>⚠️</span>Alertas</button>
+  <button class="tab-btn" data-view="importar"><span>⇪</span>Importar</button>
+  <button class="tab-btn" data-view="historial"><span>🕒</span>Historial</button>
+</nav>
+
+<script src="https://unpkg.com/[email protected]/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/[email protected]/html5-qrcode.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
